@@ -24,8 +24,7 @@ if (!$result) {
   die('Invalid query: ' . mysql_error());
 }
 
-header("Content-type: text/xml");
-
+header("Content-type: text/xml; charset=utf-8");
 // Start XML file, echo parent node
 echo "<markers>";
 
@@ -34,8 +33,8 @@ echo "<markers>";
         // Add to XML document node
         echo "<marker ";
         echo "id='" . $row["id"] . "' ";
-        echo "name='" . parseToXML($row["name"]) . "' ";
-        echo "address='" . parseToXML($row["address"]) . "' ";
+        echo "name='" . utf8_encode(parseToXML($row["name"])) . "' ";
+        echo "address='" . utf8_encode(parseToXML($row["address"])) . "' ";
         echo "lat='" . $row["lat"] . "' ";
         echo "lng='" . $row["lng"] . "' ";
         echo "type='" . $row["type"] . "' ";
