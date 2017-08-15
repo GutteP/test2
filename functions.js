@@ -6,7 +6,7 @@ function loadGPXFileIntoGoogleMap(map, filename) {
           parser.setTrackColour("#ff0000");     // Set the track line colour
           parser.setTrackWidth(5);          // Set the track line width
           parser.setMinTrackPointDelta(0.001);      // Set the minimum distance between track points
-          parser.centerAndZoom(data);
+          // parser.centerAndZoom(data);
           parser.addTrackpointsToMap();         // Add the trackpoints
           parser.addRoutepointsToMap();         // Add the routepoints
           parser.addWaypointsToMap();           // Add the waypoints
@@ -28,14 +28,133 @@ function trails()
   {
     loadGPXFileIntoGoogleMap(map, "blahammaren_sylarna.gpx");
   }
+  if(document.getElementById("sylstor").checked == true)
+  {
+    loadGPXFileIntoGoogleMap(map, "sylarna_storulvan.gpx");
+  }
+}
+function markersURL()
+{
+  // downloadUrl2('get_markers.php', function(data) {
+
+  // var url = 'save_markers.php?name=' + name + '&info=' + info +
+  //           '&type=' + type + '&track=' + track + '&lat=' + latlng.lat() + '&lng=' + latlng.lng();
+
+  // $tracks = array("1", "0");
+  var tracks = '[';
+  if(document.getElementById('storbla').checked == true)
+  {
+    tracks += '1,';
+  }
+  else
+  {
+    tracks += '0,';
+  }
+  if(document.getElementById('blasyl').checked == true)
+  {
+    tracks += '2,';
+  }
+  else
+  {
+    tracks += '0,';
+  }
+  if(document.getElementById('sylstor').checked == true)
+  {
+    tracks += '3';
+  }
+  else
+  {
+    tracks += '0';
+  }
+  tracks += ']';
+
+  var markertypes = '[';
+  if(document.getElementById('beauty').checked == true)
+  {
+    markertypes += '"vackert",';
+  }
+  else
+  {
+    markertypes += '"null",';
+  }
+  if(document.getElementById('pause').checked == true)
+  {
+    markertypes += '"rast",';
+  }
+  else
+  {
+    markertypes += '"null",';
+  }
+  if(document.getElementById('problem').checked == true)
+  {
+    markertypes += '"problem"';
+  }
+  else
+  {
+    markertypes += '"null"';
+  }
+  markertypes += ']';
+
+  return 'get_markers.php?tracks=' + tracks + '&markertypes=' + markertypes;
+
+  //http://localhost/test2/get_markers.php?tracks=[1,0,3]&markertypes=["vackert","null","rast"]
+
 }
 
 
+
+// google.maps.event.addListener(map, 'tilesloaded', tilesLoaded);
+// function tilesLoaded() {
+//     google.maps.event.clearListeners(map, 'tilesloaded');
+//     google.maps.event.addListener(map, 'zoom_changed', saveMapState);
+//     google.maps.event.addListener(map, 'dragend', saveMapState);
+//     alert("EHJ");
+// }
+
+var mapZoom = 0;
+var mapCentre = 0;
+var mapLat = 0;
+var mapLng = 0;
+
+function saveMapState() {
+    mapZoom = map.getZoom();
+    mapCentre = map.getCenter();
+    mapLat = mapCentre.lat();
+    mapLng = mapCentre.lng();
+}
+
+function getLat()
+{
+  if(mapLat == 0)
+  {
+    mapLat = 63.294662;
+  }
+  return mapLat;
+}
+function getLng()
+{
+
+  if(mapLng == 0)
+  {
+    mapLng = 16.225308;
+  }
+  return mapLng;
+}
+function getZoom()
+{
+
+  if(mapZoom == 0)
+  {
+    mapZoom = 5;
+  }
+  return mapZoom;
+}
+
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 5,
+    zoom: getZoom(),
     mapTypeId: 'terrain',
-    center: {lat: 63.294662, lng: 16.225308}
+    center: {lat: getLat(), lng: getLng()}
   });
 
   newinfowindow = new google.maps.InfoWindow({
@@ -61,16 +180,23 @@ function initMap() {
   });
   trails();
 
+  map.addListener('zoom_changed', function() {
+            saveMapState();
+          });
+  map.addListener('dragend', function() {
+            saveMapState();
+          });
 
   var markerCluster = new MarkerClusterer(map, marker,  {imagePath: 'img/m'});
 
-  downloadUrl2('get_markers.php', function(data) {
+  // downloadUrl2('get_markers.php', function(data) {
+  downloadUrl2(markersURL(), function(data) {
     var xml = data.responseXML;
     var markers = xml.documentElement.getElementsByTagName('marker');
     Array.prototype.forEach.call(markers, function(markerElem) {
       var id = markerElem.getAttribute('id');
       var name = markerElem.getAttribute('name');
-      var address = markerElem.getAttribute('address');
+      var info = markerElem.getAttribute('info');
       var type = markerElem.getAttribute('type');
       var point = new google.maps.LatLng(
           parseFloat(markerElem.getAttribute('lat')),
@@ -83,7 +209,7 @@ function initMap() {
       infowincontent.appendChild(document.createElement('br'));
 
       var text = document.createElement('text');
-      text.textContent = address
+      text.textContent = info
       infowincontent.appendChild(text);
       // var image = 'img/icon-rast.png';
       var icon = customLabel[type] || {};
@@ -104,11 +230,12 @@ function initMap() {
 
 function saveData() {
   var name = escape(document.getElementById('name').value);
-  var address = escape(document.getElementById('address').value);
+  var info = escape(document.getElementById('info').value);
   var type = document.getElementById('type').value;
+  var track = document.getElementById('track').value;
   var latlng = marker.getPosition();
-  var url = 'save_markers.php?name=' + name + '&address=' + address +
-            '&type=' + type + '&lat=' + latlng.lat() + '&lng=' + latlng.lng();
+  var url = 'save_markers.php?name=' + name + '&info=' + info +
+            '&type=' + type + '&track=' + track + '&lat=' + latlng.lat() + '&lng=' + latlng.lng();
 
   downloadUrl(url, function(data, responseCode) {
     newinfowindow.close();

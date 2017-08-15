@@ -11,7 +11,7 @@
       }
       /* Optional: Makes the sample page fill the window. */
       html, body {
-        height: 90%;
+        height: 100%;
         margin: 0;
         padding: 0;
       }
@@ -23,8 +23,12 @@
   </head>
   <body>
     <div id="options">
-        <input type="checkbox" name="trails" value="storulvan_blahammaren.gpx" id="storbla" onchange="refreshMap()">Storulvån - Blåhammar'n
-        <input type="checkbox" name="trails" value="blahammaren_sylarna.gpx" id="blasyl" onchange="refreshMap()">Blåhammar'n - Sylarna
+        <input type="checkbox" name="trails" value="storulvan_blahammaren.gpx" id="storbla" onchange="refreshMap()" checked>Storulvån - Blåhammaren
+        <input type="checkbox" name="trails" value="blahammaren_sylarna.gpx" id="blasyl" onchange="refreshMap()" checked>Blåhammaren - Sylarna
+        <input type="checkbox" name="trails" value="sylarna_storulvan.gpx" id="sylstor" onchange="refreshMap()" checked>Sylarna - Storulvån
+        <input type="checkbox" name="type" value="vackert" id="beauty" onchange="refreshMap()" checked>Vackra platser
+        <input type="checkbox" name="type" value="rastplats" id="pause" onchange="refreshMap()" checked>Rastplatser
+        <input type="checkbox" name="type" value="problem" id="problem" onchange="refreshMap()" checked>Problem
     </div>
 
     <div id="map" height="100%" width="100%"></div>
@@ -32,12 +36,17 @@
     <div id="form">
       <table>
       <tr><td>Titel:</td> <td><input type='text' id='name'/> </td> </tr>
-      <tr><td>Beskrivning:</td> <td><input type='text' id='address'/> </td> </tr>
+      <tr><td>Beskrivning:</td> <td><input type='text' id='info'/> </td> </tr>
       <tr><td>Typ:</td> <td><select id='type'> +
                  <option value='rast' SELECTED>Rastplats</option>
                  <option value='vackert'>Fint</option>
                  <option value='problem'>Problem</option>
                  </select> </td></tr>
+       <tr><td>Sträcka:</td> <td><select id='track'> +
+                  <option value='1' SELECTED>Storulvån - Blåhammaren</option>
+                  <option value='2'>Blåhammaren - Sylarna</option>
+                  <option value='3'>Sylarna - Storulvån</option>
+                  </select> </td></tr>
                  <tr><td></td><td><input type='button' value='Save' onclick='saveData()'/></td></tr>
       </table>
     </div>

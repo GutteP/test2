@@ -1,6 +1,11 @@
 <?php
 require("connect.php");
 
+// $tracks = $_GET['tracks'];
+$tracks = json_decode($_GET['tracks']);
+$markertypes = json_decode($_GET['markertypes']);
+// $tracks = array("1", "0",);
+
 function parseToXML($htmlStr)
 {
 $xmlStr=str_replace('<','&lt;',$htmlStr);
@@ -30,15 +35,22 @@ echo "<markers>";
 
   while($row = $result->fetch_assoc())
       {
-        // Add to XML document node
-        echo "<marker ";
-        echo "id='" . $row["id"] . "' ";
-        echo "name='" . utf8_encode(parseToXML($row["name"])) . "' ";
-        echo "address='" . utf8_encode(parseToXML($row["address"])) . "' ";
-        echo "lat='" . $row["lat"] . "' ";
-        echo "lng='" . $row["lng"] . "' ";
-        echo "type='" . $row["type"] . "' ";
-        echo "/>";
+        if(in_array($row["track"], $tracks))
+        {
+          if(in_array($row["type"], $markertypes))
+          {
+            // Add to XML document node
+            echo "<marker ";
+            echo "id='" . $row["id"] . "' ";
+            echo "name='" . utf8_encode(parseToXML($row["name"])) . "' ";
+            echo "info='" . utf8_encode(parseToXML($row["info"])) . "' ";
+            echo "lat='" . $row["lat"] . "' ";
+            echo "lng='" . $row["lng"] . "' ";
+            echo "type='" . $row["type"] . "' ";
+            echo "/>";
+          }
+        }
+
       }
 
 // End XML file

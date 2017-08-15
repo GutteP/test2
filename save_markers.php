@@ -3,10 +3,11 @@ require("connect.php");
 
 // Gets data from URL parameters.
 $name = $_GET['name'];
-$address = $_GET['address'];
+$info = $_GET['info'];
 $lat = $_GET['lat'];
 $lng = $_GET['lng'];
 $type = $_GET['type'];
+$track = $_GET['track'];
 
 // Opens a connection to a MySQL server.
 $connection=mysql_connect ("localhost", $username, $password);
@@ -22,13 +23,14 @@ if (!$db_selected) {
 
 // Inserts new row with place data.
 $query = sprintf("INSERT INTO markers " .
-         " (id, name, address, lat, lng, type ) " .
-         " VALUES (NULL, '%s', '%s', '%s', '%s', '%s');",
+         " (id, name, info, lat, lng, type, track ) " .
+         " VALUES (NULL, '%s', '%s', '%s', '%s', '%s', '%s');",
          mysql_real_escape_string($name),
-         mysql_real_escape_string($address),
+         mysql_real_escape_string($info),
          mysql_real_escape_string($lat),
          mysql_real_escape_string($lng),
-         mysql_real_escape_string($type));
+         mysql_real_escape_string($type),
+         mysql_real_escape_string($track));
 
 $result = mysql_query($query);
 
